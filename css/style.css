@@ -1,0 +1,112 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #1a1a1d;
+  font-family: 'Roboto', sans-serif;
+  color: #f5f5f5;
+  padding: 30px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #e23636;
+}
+
+#search {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 40px;
+  background-color: #2c2c2e;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+#search::placeholder {
+  color: #999;
+}
+
+.comic-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  padding: 0 10px;
+}
+
+.comic {
+  background-color: #2c2c2e;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.comic:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(226, 54, 54, 0.6);
+}
+
+.comic img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.comic h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #e23636;
+}
+
+.comic p {
+  font-size: 14px;
+  color: #ccc;
+}
+
+#back-btn {
+  background-color: #e23636;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.comic-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #2c2c2e;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.comic-detail img {
+  max-width: 300px;
+  border-radius: 12px;
+}
+
+.comic-detail div {
+  text-align: left;
+  max-width: 700px;
+}
+
