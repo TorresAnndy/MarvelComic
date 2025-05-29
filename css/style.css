@@ -54,6 +54,7 @@ h1 {
   padding: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
 .comic:hover {
@@ -110,3 +111,7 @@ h1 {
   max-width: 700px;
 }
 
+#search {
+  display: block;
+  margin: 0 auto 40px auto; /* Este "auto" en los lados mantiene el centrado */
+}
