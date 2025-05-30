@@ -4,18 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Marvel ComicApp</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Librerías necesarias -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://underscorejs.org/underscore-min.js"></script>
+  <script src="https://backbonejs.org/backbone-min.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>🔴 Marvel ComicApp</h1>
-    <input type="text" id="search" placeholder="🔍 Buscar cómic (ej: Hulk, Iron Man)" />
-    <div id="comic-list" class="comic-list"></div>
-    <div id="comic-detail-wrapper">
-    <div id="comic-detail" class="comic-detail" style="display:none;"></div>
+  <div id="menu">
+    <button id="btn-comics" class="active">Cómics</button>
+    <button id="btn-favorites">Favoritos</button>
+    <div id="user-info"></div>
+    <button id="login-btn">Iniciar sesión con Google</button>
+    <button id="logout-btn" style="display:none;">Cerrar sesión</button>
   </div>
-  </div>
+
+  <input type="text" id="search" placeholder="Buscar cómics..." style="display:none; margin: 10px; width: 95%;" />
+
+  <div id="comic-list" class="comic-list"></div>
+  <div id="favorites-list" class="favorites-list" style="display:none;"></div>
+  <div id="comic-detail" class="comic-detail" style="display:none;"></div>
+
   <script src="js/app.js"></script>
 </body>
 </html>
