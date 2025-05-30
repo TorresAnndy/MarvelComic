@@ -14,5 +14,13 @@
     "backbone": "^1.6.1",
     "jquery": "^3.7.1",
     "underscore": "^1.13.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TorresAnndy/MarvelComic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TorresAnndy/MarvelComic/issues"
+  },
+  "homepage": "https://github.com/TorresAnndy/MarvelComic#readme"
 }
