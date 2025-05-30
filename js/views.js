@@ -21,20 +21,19 @@ const ComicsListView = Backbone.View.extend({
     }
 
     this.collection.each((comic) => {
-      const isFav =
-        this.favorites && this.favorites.isFavorite(comic.get("id"));
+      const isFav = this.favorites && this.favorites.isFavorite(comic.get("id"));
       const thumb = comic.get("thumbnail");
       const thumbnail = thumb ? `${thumb.path}.${thumb.extension}` : "";
 
       this.$el.append(`
-    <div class="comic" data-id="${comic.get("id")}">
-      <h3>${comic.get("title")}</h3>
-      <img src="${thumbnail}" alt="${comic.get("title")}" />
-      <button class="fav-btn">${
-        isFav ? "★ Quitar favorito" : "☆ Agregar favorito"
-      }</button>
-    </div>
-  `);
+        <div class="comic" data-id="${comic.get("id")}">
+          <h3>${comic.get("title")}</h3>
+          <img src="${thumbnail}" alt="${comic.get("title")}" />
+          <button class="fav-btn">
+            ${isFav ? "★ Quitar favorito" : "☆ Agregar favorito"}
+          </button>
+        </div>
+      `);
     });
 
     return this;
@@ -49,18 +48,28 @@ const ComicsListView = Backbone.View.extend({
 
   onFavClick(e) {
     e.stopPropagation();
-    if (!favoritesCollection)
+    if (!this.favorites) {
       return alert("Inicia sesión para usar favoritos.");
+    }
 
     const $btn = $(e.currentTarget);
     const $comicDiv = $btn.closest(".comic");
     const comicId = $comicDiv.data("id");
     const comic = this.collection.get(comicId);
 
-    if (favoritesCollection.isFavorite(comicId)) {
-      favoritesCollection.removeFavorite(comicId);
+    if (this.favorites.isFavorite(comicId)) {
+      // Cambiar texto inmediatamente
+      $btn.text("☆ Agregar favorito");
+      this.favorites.removeFavorite(comicId).catch(() => {
+        // Si falla, revertir texto
+        $btn.text("★ Quitar favorito");
+      });
     } else {
-      favoritesCollection.addFavorite(comic);
+      $btn.text("★ Quitar favorito");
+      this.favorites.addFavorite(comic).catch(() => {
+        // Si falla, revertir texto
+        $btn.text("☆ Agregar favorito");
+      });
     }
   },
 });
