@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "backbone": "^1.6.1",
+    "firebase": "^11.8.1",
     "jquery": "^3.7.1",
     "underscore": "^1.13.7"
   },

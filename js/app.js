@@ -1,108 +1,90 @@
-const publicKey = "55e32c33fc52b6cb15859f117b7df89b";
-const ts = "1";
-const hash = "6236f41a16f9285e016ddb3bb1dfb522";
+// Firebase configuration e inicialización
+const firebaseConfig = {
+  apiKey: "AIzaSyCbzr1wbKl_nPNhUkEzNjXtI3qa5eKpj9s",
+  authDomain: "comic-c90b7.firebaseapp.com",
+  projectId: "comic-c90b7",
+  storageBucket: "comic-c90b7.firebasestorage.app",
+  messagingSenderId: "1081204746435",
+  appId: "1:1081204746435:web:5dbc652d221ef4f413da76",
+  measurementId: "G-0RB75CQFVT"
+};
 
-const comicList = document.getElementById("comic-list");
-const searchInput = document.getElementById("search");
-const comicDetail = document.getElementById("comic-detail");
+firebase.initializeApp(firebaseConfig);
 
-let lastQuery = "";
+let user = null;
+let comicsCollection = new ComicsCollection();
+let favoritesCollection = null;
 
-window.addEventListener("load", () => {
-  fetchComics(); // Mostrar cómics generales al cargar
-});
+const comicsListView = new ComicsListView({ collection: comicsCollection });
+const comicDetailView = new ComicDetailView();
+let favoritesListView = null;
 
-searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.trim();
-  lastQuery = query;
-  if (query.length >= 3) {
-    fetchComics(query);
-  } else if (query.length === 0) {
-    fetchComics();
-  } else {
-    comicList.innerHTML = "";
-    comicDetail.style.display = "none";
-    comicList.style.display = "block";
-  }
-});
-
-async function fetchComics(query = "") {
-  comicList.innerHTML = "<p>Cargando cómics...</p>"; // loader simple
-  comicDetail.style.display = "none";
-  comicList.style.display = "grid";
-
-  const baseUrl = `https://gateway.marvel.com/v1/public/comics?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=12`;
-  const url = query ? `${baseUrl}&titleStartsWith=${encodeURIComponent(query)}` : baseUrl;
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Error en la respuesta de la API");
-    const data = await res.json();
-    renderComics(data.data.results);
-  } catch (err) {
-    console.error("Error al cargar los cómics:", err);
-    comicList.innerHTML = "<p>Error al cargar los cómics.</p>";
-  }
+function loadComics(query = "") {
+  fetchComics(query).then(comics => {
+    comicsCollection.reset(comics);
+  });
 }
 
-function renderComics(comics) {
-  comicDetail.style.display = "none";
-  comicList.style.display = "grid";
+$("#search").on("input", function () {
+  const query = $(this).val().trim();
+  loadComics(query);
+});
 
-  comicList.innerHTML = "";
+$("#btn-comics").click(() => {
+  $("#comic-list").show();
+  $("#favorites-list").hide();
+  $("#search").show();
+  $("#btn-comics").addClass("active");
+  $("#btn-favorites").removeClass("active");
+});
 
-  if (comics.length === 0) {
-    comicList.innerHTML = "<p>No se encontraron cómics.</p>";
+$("#btn-favorites").click(() => {
+  if (!user) {
+    alert("Debes iniciar sesión para ver favoritos.");
     return;
   }
+  $("#comic-list").hide();
+  $("#favorites-list").show();
+  $("#search").hide();
+  $("#btn-favorites").addClass("active");
+  $("#btn-comics").removeClass("active");
+});
 
-  comics.forEach((comic) => {
-    const div = document.createElement("div");
-    div.className = "comic";
-    div.style.cursor = "pointer"; // cursor pointer para mejor UX
+$("#login-btn").click(() => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      user = result.user;
+      $("#user-info").text(user.displayName);
+      $("#login-btn").hide();
+      $("#logout-btn").show();
 
-    const thumbnail = `${comic.thumbnail.path}.${comic.thumbnail.extension}`;
+      favoritesCollection = new FavoritesCollection(user.uid);
+      favoritesListView = new FavoritesListView({ collection: favoritesCollection });
 
-    div.innerHTML = `
-      <h3>${comic.title}</h3>
-      <img src="${thumbnail}" alt="${comic.title}" />
-    `;
+      comicsListView.favorites = favoritesCollection;
+      comicsListView.render();
 
-    div.addEventListener("click", () => showComicDetail(comic));
-    comicList.appendChild(div);
+    }).catch(err => {
+      console.error(err);
+      alert("Error en el login.");
+    });
+});
+
+$("#logout-btn").click(() => {
+  firebase.auth().signOut().then(() => {
+    user = null;
+    $("#user-info").text("");
+    $("#login-btn").show();
+    $("#logout-btn").hide();
+    favoritesCollection = null;
+    favoritesListView && favoritesListView.collection.reset();
+    comicsListView.favorites = null;
+    comicsListView.render();
+
+    $("#btn-comics").click();
   });
-}
+});
 
-function showComicDetail(comic) {
-  comicList.style.display = "none";
-  searchInput.style.display = "none";
-  comicDetail.style.display = "block";
-
-  const thumbnail = `${comic.thumbnail.path}.${comic.thumbnail.extension}`;
-  const description = comic.description || "Sin descripción disponible.";
-  const date = comic.dates.find(d => d.type === "onsaleDate")?.date?.substring(0, 10) || "Desconocida";
-  const pages = comic.pageCount || "No disponible";
-  const price = (comic.prices && comic.prices[0] && comic.prices[0].price)
-    ? `$${comic.prices[0].price}`
-    : "No disponible";
-
-  comicDetail.innerHTML = `
-    <button id="back-btn">⬅ Volver</button>
-    <div class="comic-detail-content">
-      <img src="${thumbnail}" alt="${comic.title}" />
-      <div>
-        <h2>${comic.title}</h2>
-        <p><strong>Descripción:</strong> ${description}</p>
-        <p><strong>Fecha de publicación:</strong> ${date}</p>
-        <p><strong>Páginas:</strong> ${pages}</p>
-        <p><strong>Precio:</strong> ${price}</p>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("back-btn").addEventListener("click", () => {
-    comicDetail.style.display = "none";
-    searchInput.style.display = "block";
-    fetchComics(lastQuery.length >= 3 ? lastQuery : "");
-  });
-}
+// Inicialización inicial
+loadComics();
