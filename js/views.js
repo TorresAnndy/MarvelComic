@@ -10,7 +10,7 @@ const ComicsListView = Backbone.View.extend({
 
   events: {
     "click .comic": "onComicClick",
-    "click .fav-btn": "onFavClick"
+    "click .fav-btn": "onFavClick",
   },
 
   render() {
@@ -20,18 +20,21 @@ const ComicsListView = Backbone.View.extend({
       return this;
     }
 
-    this.collection.each(comic => {
-      const isFav = this.favorites && this.favorites.isFavorite(comic.get("id"));
+    this.collection.each((comic) => {
+      const isFav =
+        this.favorites && this.favorites.isFavorite(comic.get("id"));
       const thumb = comic.get("thumbnail");
       const thumbnail = thumb ? `${thumb.path}.${thumb.extension}` : "";
 
       this.$el.append(`
-        <div class="comic" data-id="${comic.get("id")}">
-          <h3>${comic.get("title")}</h3>
-          <img src="${thumbnail}" alt="${comic.get("title")}" />
-          <button class="fav-btn">${isFav ? "★ Quitar favorito" : "☆ Agregar favorito"}</button>
-        </div>
-      `);
+    <div class="comic" data-id="${comic.get("id")}">
+      <h3>${comic.get("title")}</h3>
+      <img src="${thumbnail}" alt="${comic.get("title")}" />
+      <button class="fav-btn">${
+        isFav ? "★ Quitar favorito" : "☆ Agregar favorito"
+      }</button>
+    </div>
+  `);
     });
 
     return this;
@@ -46,7 +49,8 @@ const ComicsListView = Backbone.View.extend({
 
   onFavClick(e) {
     e.stopPropagation();
-    if (!favoritesCollection) return alert("Inicia sesión para usar favoritos.");
+    if (!favoritesCollection)
+      return alert("Inicia sesión para usar favoritos.");
 
     const $btn = $(e.currentTarget);
     const $comicDiv = $btn.closest(".comic");
@@ -58,14 +62,14 @@ const ComicsListView = Backbone.View.extend({
     } else {
       favoritesCollection.addFavorite(comic);
     }
-  }
+  },
 });
 
 const ComicDetailView = Backbone.View.extend({
   el: "#comic-detail",
 
   events: {
-    "click #back-btn": "onBack"
+    "click #back-btn": "onBack",
   },
 
   show(comic) {
@@ -76,10 +80,16 @@ const ComicDetailView = Backbone.View.extend({
 
     const thumb = comic.get("thumbnail");
     const thumbnail = thumb ? `${thumb.path}.${thumb.extension}` : "";
-    const description = comic.get("description") || "Sin descripción disponible.";
-    const date = (comic.get("dates").find(d => d.type === "onsaleDate")?.date || "").substring(0, 10) || "Desconocida";
+    const description =
+      comic.get("description") || "Sin descripción disponible.";
+    const date =
+      (
+        comic.get("dates").find((d) => d.type === "onsaleDate")?.date || ""
+      ).substring(0, 10) || "Desconocida";
     const pages = comic.get("pageCount") || "No disponible";
-    const price = (comic.get("prices")?.[0]?.price) ? `$${comic.get("prices")[0].price}` : "No disponible";
+    const price = comic.get("prices")?.[0]?.price
+      ? `$${comic.get("prices")[0].price}`
+      : "No disponible";
 
     this.$el.html(`
       <button id="back-btn">⬅ Volver</button>
@@ -99,7 +109,7 @@ const ComicDetailView = Backbone.View.extend({
     $("#search").show();
     $("#comic-list").show();
     $("#favorites-list").hide();
-  }
+  },
 });
 
 const FavoritesListView = Backbone.View.extend({
@@ -112,7 +122,7 @@ const FavoritesListView = Backbone.View.extend({
 
   events: {
     "click .favorite": "onFavoriteClick",
-    "click .fav-btn": "onFavBtnClick"
+    "click .fav-btn": "onFavBtnClick",
   },
 
   render() {
@@ -122,7 +132,7 @@ const FavoritesListView = Backbone.View.extend({
       return this;
     }
 
-    this.collection.each(fav => {
+    this.collection.each((fav) => {
       const thumb = fav.get("thumbnail");
       const thumbnail = thumb ? `${thumb.path}.${thumb.extension}` : "";
 
@@ -151,5 +161,5 @@ const FavoritesListView = Backbone.View.extend({
     const $favDiv = $btn.closest(".favorite");
     const comicId = $favDiv.data("id");
     favoritesCollection.removeFavorite(comicId);
-  }
+  },
 });
